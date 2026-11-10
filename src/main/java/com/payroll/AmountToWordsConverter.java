@@ -56,11 +56,33 @@ public final class AmountToWordsConverter {
             cents = 0;
         }
 
-        String words = convertNumberToWords(dollars) + " Dollars";
+        // QA FIX: singular unit for exactly one ("One Dollar", "One Cent"),
+        // previously printed "One Dollars" / "One Cents".
+        String words = convertNumberToWords(dollars) + (dollars == 1 ? " Dollar" : " Dollars");
         if (cents > 0) {
-            words += " and " + convertNumberToWords(cents) + " Cents";
+            words += " and " + convertNumberToWords(cents) + (cents == 1 ? " Cent" : " Cents");
         }
         return words.trim();
+    }
+
+    /**
+     * Splits a non-negative amount into whole dollars and cents (0-99), with the
+     * same rounding as {@link #convert(double)} (12.999 -> 13 dollars, 0 cents).
+     */
+    public static long[] toDollarsAndCents(double amount) {
+        if (amount < 0) {
+            throw new IllegalArgumentException("Amount ঋণাত্মক (negative) হতে পারবে না: " + amount);
+        }
+        long totalCents = Math.round(amount * 100);
+        return new long[] { totalCents / 100, totalCents % 100 };
+    }
+
+    /** English words for a whole number, e.g. 1234 -> "One Thousand Two Hundred Thirty Four". */
+    public static String numberToWords(long number) {
+        if (number < 0) {
+            throw new IllegalArgumentException("Number must not be negative: " + number);
+        }
+        return convertNumberToWords(number);
     }
 
     private static String convertNumberToWords(long number) {

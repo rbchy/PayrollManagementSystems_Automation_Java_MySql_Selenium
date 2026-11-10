@@ -10,6 +10,33 @@ import java.sql.SQLException;
 
 public class UpdateEmployeeTab extends JPanel {
 
+    /**
+     * SQL used by "Update Employee". Column names must match db/setup_payroll_db.sql.
+     *
+     * QA FIX: the previous statement used bankname, accountno, holiday_paid_hours and
+     * special_work_hours, none of which exist (the columns are bank_name, account_no,
+     * holidaypaid_hours, specialwork_hours), so EVERY update failed with
+     * "Unknown column". It also never refreshed salary / overtime_amount /
+     * doubletime_amount / extended_amount / holidaypaid_amount / specialwork_amount.
+     * Verified against a real MySQL schema by EmployeeSqlIntegrationTest.
+     */
+    public static final String UPDATE_SQL =
+            "UPDATE employees SET first_name=?, last_name=?, designation=?, department=?, email_id=?, " +
+            "contact_no=?, hire_date=?, pay_rate_hourly=?, active=?, Total_hours=?, overtime_hours=?, " +
+            "doubletime_hours=?, pay_date=?, ssn=?, customer=?, bank_name=?, account_no=?, extended_hours=?, " +
+            "holidaypaid_hours=?, specialwork_hours=?, " +
+            "gross_salary=?, tax_deduction=?, medical_insurance=?, total_deductions=?, net_salary=?, bonus_amount=?, " +
+            "salary=?, overtime_amount=?, doubletime_amount=?, extended_amount=?, holidaypaid_amount=?, specialwork_amount=? " +
+            "WHERE employee_id=?";
+
+    /** SQL used to load an employee into the Update form. */
+    public static final String LOAD_SQL =
+            "SELECT first_name, last_name, designation, department, email_id, contact_no, hire_date, " +
+            "pay_rate_hourly, active, Total_hours, overtime_hours, doubletime_hours, salary, pay_date, ssn, " +
+            "customer, bank_name, account_no, extended_hours, holidaypaid_hours, specialwork_hours, bonus_amount " +
+            "FROM employees WHERE employee_id = ?";
+
+
     private static final long serialVersionUID = 1L;
 
     // ===============================================
@@ -269,10 +296,7 @@ public class UpdateEmployeeTab extends JPanel {
             return;
         }
 
-        String sql = "SELECT first_name, last_name, designation, department, email_id, contact_no, hire_date, " +
-                "pay_rate_hourly, active, Total_hours, overtime_hours, doubletime_hours, salary, pay_date, ssn, " +
-                "customer, bank_name, account_no, extended_hours, holidaypaid_hours, specialwork_hours, bonus_amount " +
-                "FROM employees WHERE employee_id = ?";
+        String sql = LOAD_SQL;
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -482,15 +506,8 @@ public class UpdateEmployeeTab extends JPanel {
             return;
         }
 
-        String sql = "UPDATE employees SET first_name=?, last_name=?, designation=?, department=?, email_id=?, " +
-                "contact_no=?, hire_date=?, pay_rate_hourly=?, active=?, Total_hours=?, overtime_hours=?, " +
-                "doubletime_hours=?, pay_date=?, ssn=?, customer=?, bankname=?, accountno=?, extended_hours=?, " +
-                "holiday_paid_hours=?, special_work_hours=?, " +
-                "gross_salary=?, tax_deduction=?, medical_insurance=?, total_deductions=?, net_salary=?, bonus_amount=? " +
-                "WHERE employee_id=?";
-
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+             PreparedStatement ps = conn.prepareStatement(UPDATE_SQL)) {
 
             ps.setString(1, firstName.toUpperCase());
             ps.setString(2, lastName.toUpperCase());
@@ -521,7 +538,16 @@ public class UpdateEmployeeTab extends JPanel {
             ps.setDouble(25, result.netSalary);
             ps.setDouble(26, result.bonusAmount);
 
-            ps.setInt(27, employeeId);
+            // QA FIX: also refresh the per-component amounts (same columns AddEmployeeTab
+            // writes), otherwise the View table kept showing the old overtime/doubletime pay.
+            ps.setDouble(27, result.normalSalary);
+            ps.setDouble(28, result.overtimeSalary);
+            ps.setDouble(29, result.doubletimeSalary);
+            ps.setDouble(30, result.extendedSalary);
+            ps.setDouble(31, result.holidayPaidSalary);
+            ps.setDouble(32, result.specialWorkSalary);
+
+            ps.setInt(33, employeeId);
 
             int rows = ps.executeUpdate();
             if (rows > 0) {

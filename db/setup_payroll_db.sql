@@ -1,8 +1,9 @@
 -- ============================================================================
 -- Payroll Management System - local MySQL setup
 --
--- Matches the connection details hardcoded in
--- src/main/java/com/payroll/DBConnection.java:
+-- Matches the default connection details in
+-- src/main/java/com/payroll/DBConnection.java (override with PAYROLL_DB_URL /
+-- PAYROLL_DB_USER / PAYROLL_DB_PASSWORD):
 --   URL      = jdbc:mysql://localhost:3306/payroll_db
 --   USER     = admin
 --   PASSWORD = admin123
@@ -16,9 +17,13 @@ CREATE DATABASE IF NOT EXISTS payroll_db
     COLLATE utf8mb4_unicode_ci;
 
 -- Create the application user used by DBConnection.java.
--- '%'/'localhost' both covered for safety; localhost is what the app uses.
+-- QA FIX: the comment always said '%' and 'localhost' were both covered, but only
+-- 'localhost' was created, so connecting over TCP from another host / a Docker
+-- network (e.g. the GitHub Actions MySQL service) failed with "Access denied".
 CREATE USER IF NOT EXISTS 'admin'@'localhost' IDENTIFIED BY 'admin123';
+CREATE USER IF NOT EXISTS 'admin'@'%' IDENTIFIED BY 'admin123';
 GRANT ALL PRIVILEGES ON payroll_db.* TO 'admin'@'localhost';
+GRANT ALL PRIVILEGES ON payroll_db.* TO 'admin'@'%';
 FLUSH PRIVILEGES;
 
 USE payroll_db;

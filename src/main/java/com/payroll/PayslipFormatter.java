@@ -54,7 +54,12 @@ public final class PayslipFormatter {
      * {@link AmountToWordsConverter#convert(double)}) into the wording used
      * on the printed cheque: uppercased, with "DOLLARS" removed and "CENTS"
      * replaced by "/100".
+     *
+     * @deprecated produces non-standard cheque text ("ONE THOUSAND", "ONE AND FIFTY/100"):
+     *             whole-dollar amounts get no cents part and cents are spelled out.
+     *             Use {@link #toChequeLine(double)}; kept only for backward compatibility.
      */
+    @Deprecated
     public static String toChequeWords(String amountInWords) {
         if (amountInWords == null) {
             return "";
@@ -63,5 +68,25 @@ public final class PayslipFormatter {
                 .replace(" DOLLARS", "")
                 .replace(" AND ", " AND ")
                 .replace(" CENTS", "/100");
+    }
+
+    /**
+     * Standard written-cheque amount line: dollars in words, cents as digits over 100,
+     * always present so the line cannot be extended later.
+     * <pre>
+     *   1200.00 -> "ONE THOUSAND TWO HUNDRED AND 00/100"
+     *      1.50 -> "ONE AND 50/100"
+     *      0.07 -> "ZERO AND 07/100"
+     *    12.999 -> "THIRTEEN AND 00/100"
+     * </pre>
+     * QA FIX: the cheque previously printed "ONE THOUSAND TWO HUNDRED" (no cents part)
+     * and "ONE AND FIFTY/100" (cents in words), via {@link #toChequeWords(String)}.
+     *
+     * @throws IllegalArgumentException for a negative amount
+     */
+    public static String toChequeLine(double amount) {
+        long[] dc = AmountToWordsConverter.toDollarsAndCents(amount);
+        return AmountToWordsConverter.numberToWords(dc[0]).toUpperCase()
+                + String.format(" AND %02d/100", dc[1]);
     }
 }

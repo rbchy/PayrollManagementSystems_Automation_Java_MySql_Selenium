@@ -1,0 +1,99 @@
+# Payroll Management System — CI
+#   test    : JUnit 5 + Cucumber against a real MySQL 8 service (schema from
+#             db/setup_payroll_db.sql) and the Swing UI tests on a virtual display (Xvfb)
+#   package : builds the runnable fat JAR
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Unit + BDD + DB + Swing UI tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -proot"
+          --health-interval=5s --health-timeout=5s --health-retries=20
+    env:
+      PAYROLL_DB_URL: jdbc:mysql://127.0.0.1:3306/payroll_db
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      - name: Create payroll_db schema, app user and sample rows
+        run: |
+          mysql -h 127.0.0.1 -uroot -proot < db/setup_payroll_db.sql
+          mysql -h 127.0.0.1 -uadmin -padmin123 payroll_db -e "SELECT employee_id, first_name, last_name FROM employees"
+
+      - name: Run tests (Xvfb display for AssertJ-Swing)
+        run: xvfb-run -a --server-args="-screen 0 1920x1080x24" mvn -B -ntp verify
+
+      - name: Database tests must have run (not skipped)
+        if: always()
+        run: |
+          f=target/surefire-reports/TEST-com.payroll.EmployeeSqlIntegrationTest.xml
+          grep -o '<testsuite [^>]*' "$f"
+          grep -q 'skipped="0"' "$f" && grep -q 'tests="4"' "$f"
+
+      - name: Test summary
+        if: always()
+        run: |
+          echo "| Suite | Tests | Failures | Errors | Skipped |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|---|---:|---:|---:|---:|" >> "$GITHUB_STEP_SUMMARY"
+          for f in target/surefire-reports/TEST-*.xml; do
+            n=$(basename "$f" .xml | sed 's/TEST-com.payroll.//')
+            a=$(grep -o '<testsuite [^>]*' "$f")
+            t=$(echo "$a" | grep -o 'tests="[0-9]*"' | grep -o '[0-9]*')
+            fl=$(echo "$a" | grep -o 'failures="[0-9]*"' | grep -o '[0-9]*')
+            e=$(echo "$a" | grep -o 'errors="[0-9]*"' | grep -o '[0-9]*')
+            s=$(echo "$a" | grep -o 'skipped="[0-9]*"' | grep -o '[0-9]*')
+            echo "| $n | $t | $fl | $e | $s |" | tee -a "$GITHUB_STEP_SUMMARY"
+          done
+
+      - name: Upload test reports (surefire + Cucumber HTML)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: |
+            target/surefire-reports
+            target/cucumber-reports
+            target/cucumber-html-reports
+          if-no-files-found: ignore
+
+  package:
+    name: Build runnable JAR
+    needs: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+      - run: mvn -B -ntp -DskipTests package
+      - uses: actions/upload-artifact@v4
+        with:
+          name: payroll-system-jar
+          path: target/payroll-system-*.jar

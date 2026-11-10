@@ -60,4 +60,24 @@ class PayslipFormatterTest {
     void toChequeWords_nullInput_returnsEmptyString() {
         assertEquals("", PayslipFormatter.toChequeWords(null));
     }
+
+    @ParameterizedTest
+    @DisplayName("Cheque line: ডলার শব্দে, সেন্ট সংখ্যায় — সবসময় 'AND nn/100'")
+    @CsvSource({
+            "1200.00, 'ONE THOUSAND TWO HUNDRED AND 00/100'",
+            "1.50,    'ONE AND 50/100'",
+            "0.07,    'ZERO AND 07/100'",
+            "12.999,  'THIRTEEN AND 00/100'",
+            "665.00,  'SIX HUNDRED SIXTY FIVE AND 00/100'",
+            "1234.56, 'ONE THOUSAND TWO HUNDRED THIRTY FOUR AND 56/100'"
+    })
+    void toChequeLine_standardFormat(double amount, String expected) {
+        assertEquals(expected, PayslipFormatter.toChequeLine(amount));
+    }
+
+    @Test
+    @DisplayName("Cheque line: negative amount হলে exception")
+    void toChequeLine_negativeRejected() {
+        assertThrows(IllegalArgumentException.class, () -> PayslipFormatter.toChequeLine(-1));
+    }
 }

@@ -12,6 +12,10 @@ import java.util.logging.Logger;
 
 public class PayslipTab extends JPanel {
 
+    /** SQL that loads one payroll record for the payslip and cheque. */
+    public static final String PAYSLIP_SQL = "SELECT * FROM employees WHERE employee_id = ? AND pay_date = ?";
+
+
     private static final long serialVersionUID = 1L;
     private static final DecimalFormat MONEY = new DecimalFormat("#,##0.00");
 
@@ -271,7 +275,7 @@ public class PayslipTab extends JPanel {
 
     private void fetchPayslipFromDB(int empId, String sqlPayDate, String displayPayDate) {
         // SQL query uses employee_id AND pay_date, as both fields are now confirmed to be in the 'employees' table.
-        String sql = "SELECT * FROM employees WHERE employee_id = ? AND pay_date = ?"; 
+        String sql = PAYSLIP_SQL;
         
         try (Connection conn = DBConnection.getConnection(); 
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -389,7 +393,13 @@ public class PayslipTab extends JPanel {
         
         // QA FIX: cheque-words formatting now delegates to
         // PayslipFormatter.toChequeWords(...) (pure logic, unit/Cucumber tested).
-        String wordsForCheque = PayslipFormatter.toChequeWords(amountInWords);
+        // QA FIX: standard cheque line "... AND 50/100" (cents always shown as digits)
+        String wordsForCheque;
+        try {
+            wordsForCheque = PayslipFormatter.toChequeLine(netSalary);
+        } catch (IllegalArgumentException e) {
+            wordsForCheque = "INVALID AMOUNT";
+        }
         lblChequeWords.setText(wordsForCheque);
     }
 

@@ -23,6 +23,10 @@ import java.util.Vector;
 // ==============================================================
 public class PayrollTabbedGUI extends JFrame implements AddEmployeeTab.EmployeeAddedListener {
 
+    /** SQL that fills the employee table (active employees only). */
+    public static final String VIEW_SQL = "SELECT employee_id, first_name, last_name, department, designation, contact_no, email_id, pay_rate_hourly, Total_hours, overtime_hours, overtime_amount, doubletime_hours, doubletime_amount, gross_salary, tax_deduction, medical_insurance, total_deductions, net_salary, pay_date FROM employees WHERE active = 1 ORDER BY employee_id";
+
+
     private static final long serialVersionUID = 1L;
 
     // ===============================================
@@ -200,7 +204,7 @@ public class PayrollTabbedGUI extends JFrame implements AddEmployeeTab.EmployeeA
         }
 
         // Ensure you select all 19 columns required by the table model
-        String sql = "SELECT employee_id, first_name, last_name, department, designation, contact_no, email_id, pay_rate_hourly, Total_hours, overtime_hours, overtime_amount, doubletime_hours, doubletime_amount, gross_salary, tax_deduction, medical_insurance, total_deductions, net_salary, pay_date FROM employees WHERE active = 1 ORDER BY employee_id";
+        String sql = VIEW_SQL;
 
         try (Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {

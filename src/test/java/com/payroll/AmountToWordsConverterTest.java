@@ -58,4 +58,22 @@ class AmountToWordsConverterTest {
         assertEquals("Forty Two Dollars", AmountToWordsConverter.convert(42));
         assertEquals("Nineteen Dollars", AmountToWordsConverter.convert(19));
     }
+
+    @Test
+    @DisplayName("ঠিক ১ হলে একবচন: 'One Dollar', 'One Cent'")
+    void singularUnits() {
+        assertEquals("One Dollar", AmountToWordsConverter.convert(1));
+        assertEquals("One Dollar and One Cent", AmountToWordsConverter.convert(1.01));
+        assertEquals("Two Dollars and One Cent", AmountToWordsConverter.convert(2.01));
+        assertEquals("Zero Dollars and Fifty Cents", AmountToWordsConverter.convert(0.50));
+    }
+
+    @Test
+    @DisplayName("toDollarsAndCents: পয়সা rounding সহ ভাগ")
+    void dollarsAndCents() {
+        assertArrayEquals(new long[]{1234, 56}, AmountToWordsConverter.toDollarsAndCents(1234.56));
+        assertArrayEquals(new long[]{13, 0}, AmountToWordsConverter.toDollarsAndCents(12.999));
+        assertArrayEquals(new long[]{0, 29}, AmountToWordsConverter.toDollarsAndCents(0.29));
+        assertThrows(IllegalArgumentException.class, () -> AmountToWordsConverter.toDollarsAndCents(-0.01));
+    }
 }

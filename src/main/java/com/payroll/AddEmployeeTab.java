@@ -13,6 +13,10 @@ import java.util.List;
 
 public class AddEmployeeTab extends JPanel {
 
+    /** SQL used by "Add Employee" (34 parameters). Checked against a real MySQL schema by EmployeeSqlIntegrationTest. */
+    public static final String INSERT_SQL = "INSERT INTO employees (first_name, last_name, SSN, designation, contact_no, email_id, hire_date, Total_hours, pay_rate_hourly, active, department, customer, bank_name, account_no, salary, overtime_hours, overtime_amount, doubletime_hours, doubletime_amount, extended_hours, extended_amount, holidaypaid_hours, holidaypaid_amount, specialwork_hours, specialwork_amount, bonus_amount, gross_salary, ytd_gross, tax_deduction, medical_insurance, net_salary, pay_date, total_deductions, employee_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+
+
     private static final long serialVersionUID = 1L;
 
     // ===============================================
@@ -487,7 +491,7 @@ public class AddEmployeeTab extends JPanel {
         // --- 2. Database Insertion ---
         // The auto-increment primary key (likely 'id' or 'row_id') is omitted from the column list,
         // and 'employee_id' is moved to the end of the list (34 parameters total).
-        String sql = "INSERT INTO employees (first_name, last_name, SSN, designation, contact_no, email_id, hire_date, Total_hours, pay_rate_hourly, active, department, customer, bank_name, account_no, salary, overtime_hours, overtime_amount, doubletime_hours, doubletime_amount, extended_hours, extended_amount, holidaypaid_hours, holidaypaid_amount, specialwork_hours, specialwork_amount, bonus_amount, gross_salary, ytd_gross, tax_deduction, medical_insurance, net_salary, pay_date, total_deductions, employee_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+        String sql = INSERT_SQL;
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
