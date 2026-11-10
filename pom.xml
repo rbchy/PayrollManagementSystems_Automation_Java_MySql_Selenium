@@ -146,7 +146,12 @@
             <configuration>
               <projectName>payroll-system</projectName>
               <outputDirectory>${project.build.directory}/cucumber-html-reports</outputDirectory>
-              <cucumberOutputDir>${project.build.directory}/cucumber-reports</cucumberOutputDir>
+              <!-- QA FIX: plugin 5.x needs inputDirectory + jsonFiles; the old
+                   cucumberOutputDir setting made `mvn verify` fail -->
+              <inputDirectory>${project.build.directory}/cucumber-reports</inputDirectory>
+              <jsonFiles>
+                <param>**/*.json</param>
+              </jsonFiles>
               <buildNumber>1</buildNumber>
             </configuration>
           </execution>
