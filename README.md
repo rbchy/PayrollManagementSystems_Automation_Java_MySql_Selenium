@@ -1,271 +1,418 @@
-# PayrollManagementSystems_Automation_Java_MySql_Selenium
+<div align="center">
 
-![Java](https://img.shields.io/badge/Java-21-orange?logo=java)
-![Maven](https://img.shields.io/badge/Build-Maven-blue?logo=apachemaven)
-![MySQL](https://img.shields.io/badge/MySQL-8.0-blue?logo=mysql)
-![JDBC](https://img.shields.io/badge/JDBC-Connector%2FJ-green)
-![Swing](https://img.shields.io/badge/Java-Swing%20%2F%20AWT-red)
-![JUnit5](https://img.shields.io/badge/Tests-JUnit5%20%2B%20Cucumber-25A162?logo=cucumber)
-![License](https://img.shields.io/badge/License-MIT-lightgrey)
+# 💼 Payroll Management System — Java Swing · MySQL · Test Automation
 
-**Author:** Ranajit Baran Chowdhury & Rezaul Karim — Software Programmer & QA Automation Engineer
-**Email:** chyranajit@gmail.com
-**GitHub:** [@ranajitchowdhury](https://github.com/rbchy)
+### A desktop payroll app (employees, salary engine, payslip and cheque) with a 260-test suite: JUnit 5, Cucumber BDD, AssertJ-Swing UI robots and real-MySQL integration tests, all running in GitHub Actions
 
-A desktop payroll management application built with **Java Swing** and **MySQL**, packaged and tested with **Maven**. It covers employee record management, payroll/salary calculation, payslip generation (with amount-in-words cheque text), and login authentication — backed by a JUnit5 + Cucumber automated test suite (unit, BDD, and Swing UI tests).
+[![Typing SVG](https://readme-typing-svg.demolab.com/?font=Fira+Code&size=18&pause=1500&color=0EA5E9&center=true&vCenter=true&width=900&repeat=true&lines=Java+21+%C2%B7+Swing+%C2%B7+MySQL+8+%C2%B7+JDBC;JUnit+5+%C2%B7+Cucumber+%C2%B7+AssertJ-Swing;260+%2F+260+green+in+CI+against+a+real+MySQL)](https://git.io/typing-svg)
 
----
+<!-- ============ STATUS BAR ============ -->
+[![CI](https://github.com/rbchy/PayrollManagementSystems_Automation_Java_MySql_Selenium/actions/workflows/ci.yml/badge.svg)](https://github.com/rbchy/PayrollManagementSystems_Automation_Java_MySql_Selenium/actions/workflows/ci.yml)
+![Tests](https://img.shields.io/badge/Tests-260%20%2F%20260%20passed-22c55e?style=for-the-badge&logo=checkmarx&logoColor=white)
+![BDD](https://img.shields.io/badge/Cucumber-85%20scenarios-23D96C?style=for-the-badge&logo=cucumber&logoColor=white)
+![DB](https://img.shields.io/badge/DB%20tests-real%20MySQL%208-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
 
-## 📋 Quick Overview
+![Java](https://img.shields.io/badge/Java-21-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
+![Swing](https://img.shields.io/badge/UI-Java%20Swing-E76F00?style=for-the-badge)
+![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
+![JUnit5](https://img.shields.io/badge/JUnit-5.10-25A162?style=for-the-badge&logo=junit5&logoColor=white)
+![AssertJ-Swing](https://img.shields.io/badge/AssertJ--Swing-3.17-8B5CF6?style=for-the-badge)
+![Maven](https://img.shields.io/badge/Maven-Build-C71A36?style=for-the-badge&logo=apachemaven&logoColor=white)
 
-| Component | Technology |
-|-----------|-----------|
-| **Frontend** | Java Swing / AWT (tabbed GUI) |
-| **Backend Logic** | Core Java (OOP), pure helper/validator classes |
-| **Database** | MySQL 8.0 |
-| **Connectivity** | JDBC via `mysql-connector-j` |
-| **Build** | Maven (`pom.xml`, Java 21) |
-| **Testing** | JUnit 5, Cucumber (`cucumber-java`, `junit-platform-suite`), AssertJ-Swing for UI tests |
-| **Reporting** | `maven-cucumber-reporting` (HTML test reports) |
-| **Document Output** | iText7 (PDF), Apache POI (Excel/Office) |
+![Last Commit](https://img.shields.io/github/last-commit/rbchy/PayrollManagementSystems_Automation_Java_MySql_Selenium?style=flat-square&color=0ea5e9&label=Last%20commit)
+![Repo Size](https://img.shields.io/github/repo-size/rbchy/PayrollManagementSystems_Automation_Java_MySql_Selenium?style=flat-square&color=155e75&label=Repo%20size)
+
+</div>
 
 ---
 
-## ✨ Key Features
+## 📌 At a Glance
 
-### 🔐 Login / Authentication
-- Username/password login screen (`LoginTab`)
-- Authentication logic extracted into `AuthService` for unit testing
-- On success, navigates into the main tabbed dashboard (`PayrollTabbedGUI`)
+<table>
+<tr>
+<td width="50%" valign="top">
 
-### 👨‍💼 Employee Management
-- **Add Employee** (`AddEmployeeTab`) — form validated via `EmployeeFormValidator`
-- **View Employees** (`ViewEmployeeTab`) — live table of all employees, refreshed from the database
-- **Update Employee** (`UpdateEmployeeTab`) — edit existing employee records
-- **Delete Employee** (`DeleteEmployeeTab`) — delete by Employee ID, with validation via `DeleteEmployeeHelper`
-- **Search Employee** (`SearchEmployeeTab`) — search by Employee ID or name (`SearchQueryHelper`); live table search box is protected from invalid-regex input by `SearchFilterHelper`
-- **Refresh** (`RefreshTab`) — reloads the employee table and clears the update form
+**🙋 What this is**
 
-### 💰 Payroll & Salary Calculation
-- `PayrollCalculator` computes gross/net salary, overtime, double-time, holiday pay, special-work pay, bonus, tax, and medical insurance deductions
-- `Employees` model class represents an employee record across the app
+A **Java Swing** desktop application for small-business payroll, backed by **MySQL**. It covers:
 
-### 🧾 Payslip Generation
-- **Payslip** tab (`PayslipTab`) generates a payslip and cheque for a given Employee ID + pay date
-- `PayslipFormatter` validates/parses the pay date and formats it for SQL/display
-- `AmountToWordsConverter` converts the net salary amount into cheque-style words (e.g. "One Thousand Dollars and 00/100")
+- employee records: add, view, update, search, delete
+- a **payroll engine**: normal / overtime / double-time / extended / holiday / special-work pay, bonus, 20 % tax, 10 % medical
+- **payslip and cheque** generation, with the amount in words (`ONE THOUSAND TWO HUNDRED AND 00/100`)
 
-### 🗄️ Database Integration
-- `DBConnection` provides the JDBC connection to MySQL (`payroll_db`)
-- Setup script: [`db/setup_payroll_db.sql`](db/setup_payroll_db.sql) — creates the database, app user, `employees` table, and sample rows
+The business logic lives in plain classes (no Swing, no JDBC), so it is unit-tested directly. The same rules are also written as **Cucumber** scenarios. The Swing tabs are clicked by **AssertJ-Swing** robots on a virtual display. Every SQL statement the app uses runs against a **real MySQL 8** database in CI.
 
----
+</td>
+<td width="50%" valign="top">
 
-## 🛠️ Tech Stack
+**📍 Quick facts**
 
-| Layer | Technology | Purpose |
-|-------|-----------|---------|
-| UI | Java Swing / AWT | Tabbed desktop GUI (`PayrollTabbedGUI`) |
-| Logic | Core Java (OOP) | Validators, helpers, calculators (no Swing/JDBC dependency — independently unit-tested) |
-| Data Access | JDBC (`mysql-connector-j`) | Communication with MySQL |
-| Database | MySQL 8.0 | Persistent storage (`employees` table) |
-| Documents | iText7, Apache POI | PDF / Office document generation |
-| Testing | JUnit 5, Cucumber, AssertJ-Swing | Unit, BDD/feature, and UI automation tests |
-| Reporting | maven-cucumber-reporting | HTML Cucumber test reports |
+| | |
+|---|---|
+| 🖥️ **App** | Java 21 Swing, 9 tabs |
+| 🗄️ **Database** | MySQL 8, `payroll_db.employees` (35 columns) |
+| 🧪 **Tests** | 260: unit 154 · BDD 85 · UI 8 · schema 9 · DB 4 |
+| ✅ **CI** | 260 / 260 · `mvn verify` ≈ 35 s |
+| 🧱 **Design** | Swing tabs → pure helper classes → JDBC |
+| 📊 **Reports** | Surefire · Cucumber HTML (masterthought) |
+| 📦 **Output** | runnable fat JAR built on every push |
+
+</td>
+</tr>
+</table>
 
 ---
 
-## ✅ Prerequisites
+## ✅ Latest Results (GitHub Actions)
 
-- **JDK 21** (configured in `PATH`/`JAVA_HOME`)
-- **Maven 3.8+**
-- **MySQL Server 8.0** — installed and running
-- **Git** — for version control
+| Layer | Classes / features | Tests | ✅ Passed | Runs against |
+|---|---|---:|---:|---|
+| 🧩 Unit (logic) | 9 classes | 130 | 130 | plain JVM |
+| 🛡️ Security | `SecurityTest` | 24 | 24 | plain JVM |
+| 🥒 Cucumber BDD | 8 `.feature` files | 85 | 85 | plain JVM + MySQL (`@db`) |
+| 🖱️ Swing UI | `WelcomeTabTest`, `RefreshTabTest` | 8 | 8 | Xvfb + fluxbox, `java.awt.Robot` |
+| 📐 SQL ↔ schema | `SqlSchemaConsistencyTest` | 9 | 9 | `db/setup_payroll_db.sql` |
+| 🗄️ DB integration | `EmployeeSqlIntegrationTest` | 4 | 4 | MySQL 8 service container |
+| **Total** | | **260** | **260** | |
 
----
-
-## 🚀 Installation & Setup
-
-### Step 1 — Clone the repository
-
-```bash
-git clone https://github.com/ranajitchowdhury/PayrollManagementSystem.git
-cd PayrollManagementSystem
+```mermaid
+pie showData
+    title 260 tests by layer
+    "Unit logic (130)" : 130
+    "Cucumber BDD (85)" : 85
+    "Security (24)" : 24
+    "SQL vs schema (9)" : 9
+    "Swing UI robot (8)" : 8
+    "Real MySQL (4)" : 4
 ```
 
-### Step 2 — Set up the MySQL database
+```mermaid
+pie showData
+    title CI result
+    "Passed" : 260
+    "Failed" : 0
+    "Skipped" : 0
+```
 
-Run the included setup script against your MySQL server:
+```mermaid
+xychart-beta
+    title "JUnit tests per class"
+    x-axis ["FormValid", "Security", "PayslipFmt", "PayrollCalc", "SearchQuery", "AmtWords", "DeleteHlp", "SqlSchema", "Auth", "Welcome", "SearchFilt", "DBInteg", "Refresh", "ViewTab", "UIHelper"]
+    y-axis "Tests" 0 --> 45
+    bar [40, 24, 20, 19, 15, 9, 9, 9, 8, 5, 5, 4, 3, 3, 2]
+```
+
+```mermaid
+xychart-beta
+    title "Cucumber scenarios per feature (85 incl. outline examples)"
+    x-axis ["form_validation", "payroll_calc", "amount_words", "search", "payslip", "login", "employees", "db"]
+    y-axis "Scenarios" 0 --> 35
+    bar [29, 16, 11, 9, 8, 6, 5, 1]
+```
+
+> The `@db` scenario and `EmployeeSqlIntegrationTest` **skip** (not fail) on a machine without MySQL. In CI a step checks that they actually ran.
+
+---
+
+## 🏗️ Architecture
+
+```mermaid
+flowchart LR
+    subgraph UI["🖥️ Swing tabs"]
+        W[WelcomeTab] --> L[LoginTab]
+        A[AddEmployeeTab]
+        V[ViewEmployeeTab]
+        U[UpdateEmployeeTab]
+        P[PayslipTab]
+        D[DeleteEmployeeTab]
+        S[SearchEmployeeTab]
+        R[RefreshTab]
+    end
+    subgraph Logic["🧠 Pure logic (unit + BDD tested)"]
+        PC[PayrollCalculator]
+        AW[AmountToWordsConverter]
+        PF[PayslipFormatter]
+        EV[EmployeeFormValidator]
+        AS[AuthService]
+        SQ[SearchQueryHelper]
+        SF[SearchFilterHelper]
+        DH[DeleteEmployeeHelper]
+    end
+    DB[(MySQL 8<br/>payroll_db.employees)]
+    L --> AS
+    A --> PC & EV
+    U --> PC & EV
+    P --> PF & AW
+    S --> SQ
+    V --> SF
+    D --> DH
+    UI -->|DBConnection<br/>PAYROLL_DB_* env| DB
+```
+
+### CI pipeline
+
+```mermaid
+flowchart TD
+    P([push / PR / manual]) --> T[Job 1: tests]
+    T --> M[(MySQL 8 service)]
+    M --> S[setup_payroll_db.sql<br/>schema + admin user + 2 rows]
+    S --> X[Xvfb :99 + fluxbox]
+    X --> V[mvn verify<br/>JUnit 5 + Cucumber + AssertJ-Swing]
+    V --> C{DB tests ran?<br/>skipped = 0}
+    C --> R[(Artifacts: surefire,<br/>Cucumber HTML)]
+    C -->|green| J[Job 2: mvn package]
+    J --> JAR[(payroll-system-1.0.0.jar)]
+```
+
+### Payslip flow
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor HR as HR user
+    participant PT as PayslipTab
+    participant PF as PayslipFormatter
+    participant DB as MySQL
+    participant AW as AmountToWordsConverter
+    HR->>PT: Employee ID + pay date (MM/DD/YYYY)
+    PT->>PF: toSqlDate("11/06/2026")
+    PF-->>PT: "2026-11-06" (STRICT: 11/31 rejected)
+    PT->>DB: PAYSLIP_SQL (employee_id, pay_date)
+    DB-->>PT: gross 950.00 · net 665.00
+    PT->>AW: convert(665.00)
+    AW-->>PT: "Six Hundred Sixty Five Dollars"
+    PT->>PF: toChequeLine(665.00)
+    PF-->>PT: "SIX HUNDRED SIXTY FIVE AND 00/100"
+    PT-->>HR: payslip + cheque
+```
+
+### Employee record lifecycle
+
+```mermaid
+stateDiagram-v2
+    [*] --> Validated: Add form (names, phone, account, dates)
+    Validated --> Rejected: invalid input / negative hours
+    Rejected --> Validated: fix and retry
+    Validated --> Active: INSERT (pay calculated)
+    Active --> Active: Update (pay recalculated, all amounts saved)
+    Active --> Paid: Payslip + cheque for a pay date
+    Paid --> Active: next pay period
+    Active --> Hidden: active = 0
+    Hidden --> Active: active = 1
+    Active --> [*]: Delete
+    Hidden --> [*]: Delete
+```
+
+---
+
+## 💰 Payroll Rules
+
+| Component | Formula | Multiplier |
+|---|---|---:|
+| Normal pay | `min(totalHours, 40) × rate` | 1.0 |
+| Overtime | `overtimeHours × rate × 1.5` | 1.5 |
+| Double time | `doubletimeHours × rate × 2` | 2.0 |
+| Extended / Holiday / Special work | `hours × rate` | 1.0 |
+| Gross | sum of the above + bonus | |
+| Tax | `gross × 20 %` | |
+| Medical | `gross × 10 %` | |
+| **Net** | `gross − tax − medical` | |
+
+```mermaid
+pie showData
+    title "Where a $950 gross goes (40 h × $20 + 5 h OT)"
+    "Net pay" : 665
+    "Tax 20%" : 190
+    "Medical 10%" : 95
+```
+
+Negative pay rate, hours or bonus are rejected. Money is rounded half-up to cents.
+
+---
+
+## 🗄️ Database
+
+```mermaid
+erDiagram
+    EMPLOYEES {
+        int id PK
+        int employee_id UK
+        varchar first_name
+        varchar last_name
+        varchar ssn
+        varchar designation
+        varchar department
+        varchar contact_no
+        varchar email_id
+        date hire_date
+        varchar bank_name
+        varchar account_no
+        double pay_rate_hourly
+        double Total_hours
+        double overtime_hours
+        double overtime_amount
+        double holidaypaid_hours
+        double holidaypaid_amount
+        double bonus_amount
+        double gross_salary
+        double tax_deduction
+        double medical_insurance
+        double net_salary
+        date pay_date
+        tinyint active
+    }
+```
+
+<sub>Simplified: the table also has doubletime, extended and special-work hours/amounts, `salary`, `ytd_gross` and `total_deductions`. See [`db/setup_payroll_db.sql`](db/setup_payroll_db.sql).</sub>
+
+---
+
+## 🧪 Test Coverage
+
+```mermaid
+mindmap
+  root((260 tests))
+    Unit 130
+      PayrollCalculator
+      AmountToWords
+      PayslipFormatter
+      FormValidator
+      Search / Delete / Auth
+    Security 24
+      SQL-injection inputs
+      parameterised SQL
+      bad regex in search box
+    Cucumber 85
+      login
+      payroll math
+      cheque words
+      form validation
+      search
+      db connection
+    Swing UI 8
+      Welcome tiles switch tabs
+      Refresh button
+    SQL vs schema 9
+      every column exists
+      34 / 33 placeholders
+    Real MySQL 4
+      insert
+      update
+      search + view
+      delete
+```
+
+---
+
+## ▶️ Running Locally
+
+**Prerequisites:** JDK 21, Maven 3.9+, MySQL 8.
 
 ```bash
+# 1. Database: creates payroll_db, user admin/admin123 (local demo only) and 2 sample rows
 mysql -u root -p < db/setup_payroll_db.sql
+
+# 2. Tests + Cucumber HTML report (target/cucumber-html-reports)
+mvn clean verify
+
+# 3. Run the app
+mvn -DskipTests package
+java -jar target/payroll-system-1.0.0.jar     # demo login: admin / admin123
 ```
 
-This creates:
-- the `payroll_db` database
-- an application user `admin` / `admin123` (used by `DBConnection.java`)
-- the `employees` table with the full schema used by the app
-- two sample employee rows (John Doe, Jane Smith)
+| Setting | Env var | `-D` property | Default |
+|---|---|---|---|
+| JDBC URL | `PAYROLL_DB_URL` | `payroll.db.url` | `jdbc:mysql://localhost:3306/payroll_db` |
+| DB user | `PAYROLL_DB_USER` | `payroll.db.user` | `admin` |
+| DB password | `PAYROLL_DB_PASSWORD` | `payroll.db.password` | `admin123` |
 
-> If you use different credentials, update `URL`, `USER`, and `PASSWORD` in
-> `src/main/java/com/payroll/DBConnection.java` to match.
-
-### Step 3 — Build the project
-
-```bash
-mvn clean install
-```
-
-Maven will download `mysql-connector-j`, JUnit 5, Cucumber, AssertJ-Swing,
-iText7, and Apache POI automatically (see `pom.xml`).
-
----
-
-## ▶️ How to Run
-
-Run the application's main class, `com.payroll.PayrollTabbedGUI`:
-
-```bash
-mvn exec:java -Dexec.mainClass="com.payroll.PayrollTabbedGUI"
-```
-
-or run the packaged jar after `mvn clean package`:
-
-```bash
-java -jar target/payroll-system-1.0.0.jar
-```
-
-1. The **Login** screen appears — log in to access the dashboard.
-2. From the tabbed dashboard you can:
-   - Add, view, update, search, and delete employee records
-   - Refresh the employee table
-   - Generate payslips and cheques for a given Employee ID and pay date
-
----
-
-## 🧪 Testing
-
-This project has an automated test suite covering unit, BDD/Cucumber, and Swing UI layers.
-
-```bash
-mvn clean test      # run all unit + Cucumber tests
-mvn clean verify     # run tests and generate the Cucumber HTML report
-```
-
-| Test type | Examples |
-|-----------|----------|
-| **Unit (JUnit 5)** | `EmployeeFormValidatorTest`, `PayslipFormatterTest`, `PayrollCalculatorTest`, `AmountToWordsConverterTest`, `AuthServiceTest`, `SearchQueryHelperTest`, `DeleteEmployeeHelperTest`, `SearchFilterHelperTest`, `SecurityTest`, `UIHelperTest` |
-| **Cucumber (BDD)** | `login_auth.feature`, `search_employee.feature`, `payslip_formatting.feature`, `employee_form_validation.feature`, `payroll_calculator.feature`, `amount_to_words.feature`, `employees_model.feature`, `db_connection.feature` |
-| **Swing UI (AssertJ-Swing, `@Tag("ui")`)** | `WelcomeTabTest`, `RefreshTabTest` — drive real `java.awt.Robot` clicks, require an on-screen display |
-
-Test highlights:
-- **Smoke** — main tabs/labels/buttons render correctly on startup
-- **Sanity/Regression** — positive and negative cases for date parsing, login credentials, search, and employee deletion
-- **Security** — SQL-injection-style inputs are rejected/parameterized (`SecurityTest`), and the live search box no longer throws `PatternSyntaxException` on malformed regex (`SearchFilterHelper`)
-
-Detailed manual + automated test plan for the Swing tabs: [`TEST_PLAN_GUI_TABS.md`](TEST_PLAN_GUI_TABS.md).
+> The Swing UI tests (`@Tag("ui")`) need a display. Without one they fail with `HeadlessException`; exclude them with `mvn test -DexcludedGroups=ui`. Without MySQL the DB tests skip.
 
 ---
 
 ## 📁 Project Structure
 
-```
-PayrollManagementSystem/
-├── pom.xml
-├── db/
-│   └── setup_payroll_db.sql              ← MySQL schema + sample data
-├── src/
-│   ├── main/java/com/payroll/
-│   │   ├── PayrollTabbedGUI.java          ← main entry point / tabbed window
-│   │   ├── LoginTab.java                  ← login screen
-│   │   ├── AuthService.java               ← login credential check (extracted, tested)
-│   │   ├── AddEmployeeTab.java
-│   │   ├── ViewEmployeeTab.java
-│   │   ├── UpdateEmployeeTab.java
-│   │   ├── DeleteEmployeeTab.java
-│   │   ├── DeleteEmployeeHelper.java      ← delete validation (extracted, tested)
-│   │   ├── SearchEmployeeTab.java
-│   │   ├── SearchQueryHelper.java         ← search SQL/pattern logic (extracted, tested)
-│   │   ├── SearchFilterHelper.java        ← safe live-search regex filter (extracted, tested)
-│   │   ├── RefreshTab.java
-│   │   ├── WelcomeTab.java
-│   │   ├── PayslipTab.java
-│   │   ├── PayslipFormatter.java          ← payslip date/SQL formatting (extracted, tested)
-│   │   ├── AmountToWordsConverter.java    ← cheque amount-in-words (extracted, tested)
-│   │   ├── PayrollCalculator.java         ← salary/deductions calculation (extracted, tested)
-│   │   ├── EmployeeFormValidator.java     ← Add/Update form validation (extracted, tested)
-│   │   ├── Employees.java                 ← employee model
-│   │   ├── UIHelper.java                  ← UI font/look-and-feel helper
-│   │   └── DBConnection.java              ← JDBC connection (payroll_db)
-│   └── test/
-│       ├── java/com/payroll/              ← JUnit5 + AssertJ-Swing tests
-│       └── java/com/payroll/cucumber/     ← Cucumber step definitions + runner
-│       └── resources/features/            ← Gherkin .feature files
-├── TEST_PLAN_GUI_TABS.md
-└── README.md
+```text
+PayrollManagementSystems_Automation_Java_MySql_Selenium/
+├── .github/workflows/ci.yml        # MySQL service + Xvfb tests, fat-JAR job
+├── db/setup_payroll_db.sql         # schema, app user, sample rows
+├── pom.xml                         # Java 21 · JUnit 5 · Cucumber 7 · AssertJ-Swing · shade
+└── src/
+    ├── main/java/com/payroll/
+    │   ├── PayrollTabbedGUI.java   # main window (entry point)
+    │   ├── *Tab.java               # Welcome, Login, Add, View, Update, Payslip, Delete, Search, Refresh
+    │   ├── PayrollCalculator.java  # pay engine
+    │   ├── AmountToWordsConverter.java · PayslipFormatter.java
+    │   ├── EmployeeFormValidator.java · AuthService.java
+    │   ├── SearchQueryHelper.java · SearchFilterHelper.java · DeleteEmployeeHelper.java
+    │   └── DBConnection.java       # JDBC, settings from env
+    └── test/
+        ├── java/com/payroll/       # 15 JUnit classes (unit, security, UI, schema, DB)
+        ├── java/com/payroll/cucumber/  # step definitions + runner
+        └── resources/features/     # 8 Gherkin feature files
 ```
 
 ---
 
-## 🌟 Highlights
+## 🧹 Maintenance Log
 
-| Highlight | Detail |
-|-----------|--------|
-| ✅ Desktop GUI | Java Swing tabbed interface for all payroll operations |
-| ✅ Complete CRUD | Add, view, update, search, delete employees in MySQL |
-| ✅ Payroll Engine | Gross/net salary, overtime, holiday pay, bonus, deductions |
-| ✅ Payslip & Cheque | Auto-generated payslip with amount-in-words cheque text |
-| ✅ Clean Architecture | Business logic extracted from Swing tabs into standalone, testable classes |
-| ✅ Automated Testing | JUnit5 + Cucumber + AssertJ-Swing, with smoke/sanity/regression/security coverage |
-| ✅ JDBC Integration | MySQL persistence via `mysql-connector-j` |
-
----
-
-## 🔮 Future Enhancements
-
-- 🔒 Move hardcoded DB/login credentials to environment variables or a config file
-- 📄 Export payslips directly as PDF (iText7 already a dependency)
-- 📊 Excel/Office payroll reports via Apache POI
-- 🌐 Web version using Spring Boot + React
-- 🔗 REST API for third-party integration
-- 🧪 Headless/Xvfb setup for running AssertJ-Swing tests in CI
+| Area | Before | Now |
+|---|---|---|
+| **Update Employee** | SQL used `bankname`, `accountno`, `holiday_paid_hours`, `special_work_hours`; none exist, so **every update failed** with *Unknown column* | correct columns; also saves `salary` and every pay-component amount. Proven against real MySQL |
+| Cheque line | `ONE THOUSAND TWO HUNDRED` (no cents) and `ONE AND FIFTY/100` | `… AND 00/100`, `ONE AND 50/100` |
+| Amount in words | `One Dollars`, `One Cents` | `One Dollar`, `One Cent` |
+| DB setup script | comment promised `admin@'%'`, only `admin@localhost` was created → TCP / Docker clients denied | both users created |
+| `mvn verify` | Cucumber report plugin mis-configured → **build failed after the tests** | `inputDirectory` + `jsonFiles`; HTML report generated |
+| DB credentials | hard-coded in `DBConnection` | `PAYROLL_DB_*` env / `-D` (same defaults) |
+| SQL | inline strings in the Swing tabs | constants checked by `SqlSchemaConsistencyTest` + real-MySQL test |
+| Repo | `dependency-reduced-pom.xml` committed | removed; `.gitignore` |
+| README | linked a missing test plan and LICENSE, wrong clone URL | rewritten from the code and the CI run |
+| CI | none | GitHub Actions: MySQL 8 + Xvfb + fluxbox, JAR artifact |
 
 ---
 
-## 🤝 Contributing
+## 📈 Roadmap
 
-Contributions are welcome!
-
-1. Fork the repository
-2. Create your branch: `git checkout -b feature/improvement`
-3. Commit your changes: `git commit -m 'Add improvement'`
-4. Push to the branch: `git push origin feature/improvement`
-5. Open a Pull Request
-
----
-
-## 📄 License
-
-This project is open-source under the **MIT License**. See [LICENSE](LICENSE) for details.
+- [x] CI with a real MySQL database and the Swing UI tests
+- [x] Cheque wording in standard `AND nn/100` form
+- [ ] `payroll_history` table so YTD gross is a real `SUM` per year
+- [ ] Hash the login password instead of a fixed demo pair
+- [ ] Export payslips to PDF (iText 7 is already a dependency)
+- [ ] Excel payroll report (Apache POI is already a dependency)
 
 ---
 
-## 💬 Support & Feedback
+## 🔗 Related Projects
 
-If you found this project helpful:
-
-- ⭐ **Star** the repository
-- 🍴 **Fork** it for your own use
-- 💬 **Open an issue** for bugs or suggestions
-- 🤝 **Contribute** to improve the project
+| Repo | What it is |
+|---|---|
+| [InventoryControlManagement_JavaMySql](https://github.com/rbchy/InventoryControlManagement_JavaMySql) | Java Swing + MySQL inventory app with CI |
+| [BhojanAloy-Food-Coffee-Shop-POS-System](https://github.com/rbchy/BhojanAloy-Food-Coffee-Shop-POS-System) | Java POS system with MySQL |
+| [PPES-Pharmaceutical-Packaging-Management](https://github.com/rbchy/PPES-Pharmaceutical-Packaging-Management) | Pharma packaging management system |
+| [AppiumMobileAutomation](https://github.com/rbchy/AppiumMobileAutomation) | Appium + TestNG on an Android emulator in CI |
+| [rbchy](https://github.com/rbchy/rbchy) | Profile and full project list |
 
 ---
 
 ## ⚠️ Disclaimer
 
-This project is designed for educational and small-scale organizational use. For enterprise-level payroll processing, consult payroll specialists and compliance experts to ensure adherence to local tax laws and regulations.
+Educational / portfolio project. Tax and insurance rates are fixed demo values, not real payroll law. Use a payroll specialist for real payroll. `admin / admin123` are local demo credentials only.
 
 ---
 
-**Version:** 1.0.0
-**Last Updated:** June 2026
+## 👤 Authors
+
+<div align="center">
+
+**Ranajit Baran Chowdhury (RB Chowdhury)** & **Rezaul Karim**
+QA Automation Engineer / SDET · West Norriton, Pennsylvania, USA
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/rbchy/)
+[![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/rbchy)
+[![Website](https://img.shields.io/badge/Website-rbchy.github.io%2Frbchy-0d9488?style=for-the-badge&logo=githubpages&logoColor=white)](https://rbchy.github.io/rbchy/)
+[![Portfolio](https://img.shields.io/badge/Portfolio-Website-blueviolet?style=for-the-badge&logo=wix&logoColor=white)](https://rbc6543.wixsite.com/rbc-portfolio)
+[![Gmail](https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:chyranajit@gmail.com)
+
+⭐ *If this project helps you, a star on the repo is appreciated.*
+
+</div>
